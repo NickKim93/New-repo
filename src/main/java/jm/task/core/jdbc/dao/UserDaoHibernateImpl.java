@@ -5,7 +5,7 @@ import jm.task.core.jdbc.util.Util;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-import javax.transaction.Transactional;
+import java.sql.DatabaseMetaData;
 import java.util.List;
 
 public class UserDaoHibernateImpl implements UserDao {
@@ -16,26 +16,20 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void createUsersTable() {
-        String sql = "CREATE TABLE Users" + "(ID INTEGER NOT NULL AUTO_INCREMENT," + "Name VARCHAR(255),"
+        String sql ="CREATE TABLE IF NOT EXISTS Users" + "(ID INTEGER NOT NULL AUTO_INCREMENT," + "Name VARCHAR(255),"
                 + "LastName VARCHAR(255)," + "Age TINYINT," + "PRIMARY KEY (ID))";
-        try (Session session = factory.openSession()) {
-            session.beginTransaction();
-            session.createSQLQuery(sql).executeUpdate();
-            session.getTransaction().commit();
-        } catch(Exception e) {
-            System.out.println("Table users already exists");
-        }
+        Session session = factory.openSession();
+        session.beginTransaction();
+        session.createSQLQuery(sql).executeUpdate();
+        session.getTransaction().commit();
     }
 
     @Override
     public void dropUsersTable() {
-        try (Session session = factory.openSession()) {
-            session.beginTransaction();
-            session.createSQLQuery("DROP TABLE users").executeUpdate();
-            session.getTransaction().commit();
-        } catch(Exception e) {
-            System.out.println("Can't delete table, table does not exist");
-        }
+        Session session = factory.openSession();
+        session.beginTransaction();
+        session.createSQLQuery("DROP TABLE IF EXISTS users").executeUpdate();
+        session.getTransaction().commit();
     }
 
     @Override

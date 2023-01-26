@@ -18,6 +18,8 @@ public class Util {
 
     private static SessionFactory factory;
 
+    private Util(){}
+
     public static Connection getConnection() {
         Connection connection;
         try {
